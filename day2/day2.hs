@@ -1,5 +1,7 @@
 {-# LANGUAGE LambdaCase, BlockArguments #-}
 
+import Data.List.Split (chunksOf)
+
 main :: IO ()
 main = do
     input <- words <$> readFile "input.txt"
@@ -13,19 +15,11 @@ data Outcome = Loose | Draw | Win
   deriving (Show, Eq)
 
 solveEasy :: [String] -> Integer
-solveEasy = go 0 . map shape
-  where
-    go acc (x:y:xs) = go (acc + game x y) xs
-    go acc []       = acc
-    go acc [x]      = error "uneven list"
+solveEasy = sum . map (\(x:y:_) -> game x y) . chunksOf 2 . map shape
 
 solveHard :: [String] -> Integer
-solveHard = go 0
+solveHard = sum . map (\(x:y:_) -> predictedGame (shape x) (outcome y)) . chunksOf 2
   where
-    go acc (x:y:xs) = go (acc + predictedGame (shape x) (outcome y)) xs
-    go acc []       = acc
-    go acc [x]      = error "uneven list"
-
     predictedGame :: Shape -> Outcome -> Integer
     predictedGame theirs goal = let
       mine = case goal of
