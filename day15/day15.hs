@@ -90,4 +90,4 @@ day15'2 cmax sensors = let
     unreachable = filter (\pos -> not $ any (flip inRange pos) sensors) $ fringes
     freq (Pos x y) = 4000000 * x + y
   in
-    freq $ the unreachable
+    freq $ head unreachable
